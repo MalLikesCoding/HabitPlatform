@@ -1,0 +1,6 @@
+Set up Express server, environment variables, and MongoDB connection
+
+- Configured server.js with Express, middleware, and a default route
+- Added .env for secure environment variable management
+- Connected to MongoDB Atlas using Mongoose
+- Initialized Git, added .gitignore, and pushed to GitHub for collaboration
