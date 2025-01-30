@@ -33,7 +33,4 @@ const createTestUser = async () => {
   }
 };
 
-// Run the test
-createTestUser();
-
-
+// Run 
