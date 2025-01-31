@@ -3,6 +3,7 @@ const express = require('express'); // Web framework for Node.js
 const mongoose = require('mongoose'); // MongoDB object modeling
 const dotenv = require('dotenv'); // Loads environment variables
 const cors = require('cors'); // Enables cross-origin requests
+const path = require('path'); // Utility for handling file paths
 
 // 2. Load Environment Variables
 dotenv.config();
@@ -10,11 +11,16 @@ dotenv.config();
 // 3. Create Express App
 const app = express();
 
-// 4. Middleware Setup
+// 4. Configure View Engine and Static Files
+app.set('view engine', 'ejs'); // Set EJS as the templating engine
+app.set('views', path.join(__dirname, 'views')); // Set the views directory
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static files
+
+// 5. Middleware Setup
 app.use(cors()); // Enables cross-origin requests
 app.use(express.json()); // Parses incoming JSON requests
 
-// 5. Import and Use Auth Routes (✅ Correctly Mounted)
+// 6. Import and Use Auth Routes (✅ Correctly Mounted)
 try {
   const authRoutes = require('./routes/authRoutes'); // ✅ Import authentication routes
   app.use('/api/auth', authRoutes); // ✅ Mount routes under "/api/auth"
@@ -23,23 +29,24 @@ try {
   console.error('❌ Error loading authRoutes.js:', error);
 }
 
-// 6. Debug: Check Environment Variables
-console.log('MONGO_URI is:', process.env.MONGO_URI);
+// 7. Debug: Check Environment Variables
+// ❌ Removed to prevent exposing sensitive information
+// console.log('MONGO_URI is:', process.env.MONGO_URI);
 
-// 7. Database Connection
-mongoose.connect(process.env.MONGO_URI)
+// 8. Database Connection
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('✅ MongoDB Connected'))
   .catch(err => {
     console.error('❌ MongoDB Connection Error:', err);
     process.exit(1); // Exit process if database connection fails
   });
 
-// 8. Default Route
+// 9. Default Route - Render EJS Template
 app.get('/', (req, res) => {
-  res.send('Habit Community Platform API is running.');
+  res.render('index'); // Renders views/index.ejs
 });
 
-// 9. Debugging: List All Registered Routes (Including Nested Routes)
+// 10. Debugging: List All Registered Routes (Including Nested Routes)
 console.log('🔎 Listing all registered routes in server.js:');
 app._router.stack.forEach((r) => {
   if (r.route) {
@@ -54,11 +61,13 @@ app._router.stack.forEach((r) => {
   }
 });
 
-// 10. Start Server
+// 11. Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
+
 
 
 
